@@ -1,0 +1,168 @@
+﻿#include <iostream>
+#include <math.h> 
+#include <cmath> 
+#include <vector> 
+#include<iomanip> 
+#include <sstream>
+#define _USE_MATH_DEFINES 
+
+using namespace std;
+
+//класс очереди.
+class turn {
+
+private: string *turnInp;  //массив для хранения очереди.
+private: string *turnTmp;  //массив для временного хранения очереди.
+private: string *forError; // переменная для создания исключения
+private: int count = 0;    //количество элементов в массиве
+
+
+//Конструктор класса
+public: turn()
+    {
+    turnInp = new string[count];
+    turnTmp = new string[count];
+    }
+
+//метод для добавления строки в очередь
+public: void add(string a)
+    {
+    move();                                 //перемещаем основной массив во временный
+    delete[] turnInp;                       //очищаем старый массива
+    turnInp = new string[count+1];          //выделяем память под новый массив на еденицу больше предыдущего
+    moveBack();                             //перемещаем временный массив в основной
+    count++;                                //увеличиваем счетчик количества элементов
+    turnInp[count-1] = a;                   //добавляем элемент в конец очередь
+    delete[] turnTmp;                       //очищаем временный массива
+    turnTmp = new string[count];            //увеличиваем временный массив до размера основного
+    }
+
+//метод для удаления элемента из очереди
+public: void delet(int number)
+{
+    if (count < 2)
+    {
+        cout << "this sting is not exist";
+    }
+    else
+    {
+        for (int i = number; i < count - 1; i++)
+        {
+            turnInp[i] = turnInp[i + 1];          // сдвигаем массив на один элемент начиная с удаленного
+
+        }
+        move();                             //перемещаем основной массив во временный
+        delete[] turnInp;                   //очищаем старый массива
+        turnInp = new string[count - 1];    //выделяем память под новый массив на еденицу меньше предыдущего
+        count--;                            //уменьшаем счетчик количества элементов
+        moveBack();                         //перемещаем временный массив в основной
+        delete[] turnTmp;                   //очищаем временный массива
+        turnTmp = new string[count];         //уменьшаем временный массив до размера основного
+    }
+}
+
+//метод для вывода всей очереди
+public: void showTern()
+{
+    for (int i = 0; i < count; i++)  
+    {
+        cout << i <<". " << turnInp[i] << "\n";  // перебираем весь массив и выводим каждый элемент.
+    }
+}
+
+//метод для вывода одного значения массива
+public: void showValueTern(int number)
+{
+    if ((number < 0) || (number > count - 1))   //проверяем существует ли данный элемент
+        cout << "this sting is not exist";      //еси нет то выдаем сообщение об этом
+    else
+        cout << number << ". " << turnInp[number] << "\n";  //иначе выводим этот элемент.
+}
+
+//метод для автоматического добавления определенного количества строк
+public: void fill(int count)
+{
+    for (int i = 0; i < count; i++)  
+    {
+        stringstream s;               //переменная для хранения строки
+        s << "String for test - " << i;// создаем строку
+        add(s.str());                 //добавляем строку
+    
+    }
+
+}
+
+// геттер для получения значения количества элементов.
+public: int getCount ()
+{
+    return count;
+}
+
+//метод для перемещения основного массива во временный
+private: void move()
+{
+    for (int i = 0; i < count; i++)
+    {
+        turnTmp[i] = turnInp[i];  // переносим один массив в другой
+    }
+}
+
+//метод для перемещения временного массива в основной
+private: void moveBack()
+{
+    for (int i = 0; i < count; i++)
+    {
+        turnInp[i]  = turnTmp[i]; // переносим один массив в другой
+    }
+}
+
+// метод для задания с исключениями выводит указанную строку но без проверки существует ли она.
+public: void ForError(string Err)
+{
+    forError = new string;      // выделяем динамической памяти
+    *forError = Err;            // помещаем в динамическую память значени
+    delete forError;            // возвращаем память обратно
+    
+        if (forError)           // проверка существует ли указатель на память
+        {
+            throw "Error";      // если нет то генерируем исключение
+        }
+        else                    // иначе производим действия
+        {
+            cout << *forError;          // разыменование удаленного указателя приведет к ошибки
+            delete forError;            // попытка освободить уже освобожденную память приведет к ошибке
+        }
+
+    }
+
+};
+
+int main()
+{
+    turn turn1; // создаем объект класса очередь
+    
+    // заполняем и удаляем элементы очередт а затем выводим её
+    turn1.add("testing input1");
+    turn1.add("testing input2");
+    turn1.add("testing input3");
+    turn1.add("testing input4");
+    turn1.add("testing input5");
+    turn1.add("testing input6");
+    turn1.fill(7);
+    cout << ">>before turn<<" << "\n";
+    turn1.showTern();
+    turn1.delet(3);
+    cout << ">>turn after deleted<<" << "\n";
+    turn1.showTern();
+
+    // обработка ошибки динамической памяти
+    cout << ">>processing error<<" << "\n";
+    try {   // блок где может быть ошибка
+     turn1.ForError("test");    //вызываем ошибочны метод
+    }
+    catch (...) // действия на случай обнаружения ошибки
+    {
+        cout << "you trying to get access to delete pointer" "\n"; // выводим сообщение об ошибки
+    }        
+}
+
