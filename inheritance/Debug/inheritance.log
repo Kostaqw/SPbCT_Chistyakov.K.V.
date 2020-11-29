@@ -1,0 +1,3 @@
+﻿  lab13_main.cpp
+C:\Users\Zver\source\repos\inheritance\lab13_main.cpp(20,1): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+  inheritance.vcxproj -> C:\Users\Zver\source\repos\inheritance\Debug\inheritance.exe
